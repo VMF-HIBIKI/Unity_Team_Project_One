@@ -1,18 +1,7 @@
 # 类马里奥脑洞向游戏项目
 
 
-<style>
-
-body {
-    background-image: url('Imagebackground/vv.png'); 
-    background-repeat: no-repeat; /* 不重复平铺 */
-    background-size: cover; /* 等比例缩放覆盖整个页面，也可按需设为contain等 */
-    /* 还可按需添加其他样式，如调整背景位置 */
-    background-position: right bottom; 
-}
-
-</style>
-
+![image](Imagebackground/vv.png)
 
 ## *1：如何克隆项目，上传修改？*
 
@@ -24,4 +13,10 @@ github项目地址
 
 [VMF-HIBIKI/Unity_Team_Project_One: using git to control the project](https://github.com/VMF-HIBIKI/Unity_Team_Project_One)
 
-## *2：*
+![image](Imagebackground/vv1.png)
+
+## *2：具体内容？*
+
+还没想好，具体请各位看任务书吧！
+
+![image](Imagebackground/vv2.png)
