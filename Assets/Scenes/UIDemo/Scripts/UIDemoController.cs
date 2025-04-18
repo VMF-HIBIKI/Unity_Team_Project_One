@@ -36,15 +36,15 @@ public class UIDemoController : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        //uiFrame.OpenWindow(ScreenIds.StartGameWindow);
+        uiFrame.OpenWindow(ScreenIds.StartGameWindow);
     }
     /// <summary>
     /// 演示开始时，打开常驻面板和临时消息面板
     /// </summary>
     private void OnStartDemo()
     {
-        //uiFrame.ShowPanel(ScreenIds.NavigationPanel);// 显示导航面板（常驻）
-        //uiFrame.ShowPanel(ScreenIds.ToastPanel);// 显示提示面板（临时消息）
+        uiFrame.ShowPanel(ScreenIds.NavigationPanel);// 显示导航面板（常驻）
+        uiFrame.ShowPanel(ScreenIds.ToastPanel);// 显示提示面板（临时消息）
     }
     /// <summary>
     /// 带参数的窗口跳转
