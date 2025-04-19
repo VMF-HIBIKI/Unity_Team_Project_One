@@ -13,6 +13,7 @@ public class PlayerDemo : MonoBehaviour
         new Keyframe(0.2f, 0.8f),
         new Keyframe(1, 1)
     );                                    // 加速度曲线，默认为对数曲线
+    public float horizontalMagnitude = 0.5f;   // 水平施加的力大小
 
     [Header("跳跃设置")]
     public float jumpForce = 7f;          // 跳跃力
@@ -33,10 +34,22 @@ public class PlayerDemo : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckRadius = 0.2f;
 
+    [Header("碰撞设置")]
+    public float collisionResetTime = 0.2f;  // 碰撞后重置水平速度的时间（秒）
+    public bool showCollisionDebug = true;   // 是否显示碰撞调试信息
+
     [Header("调试显示")]
     public bool showDebugGizmos = true;   // 是否显示调试图形
     public bool showDebugText = true;     // 是否显示调试文本
     public Color debugColor = Color.green; // 调试颜色
+
+    [Header("玩家状态")]
+    public bool isDie = false;            // 玩家是否死亡
+    public bool IsDie
+    {
+        get { return isDie; }
+        set { isDie = value; }
+    }
 
     private Rigidbody rb;
     private bool isGrounded;
@@ -48,6 +61,12 @@ public class PlayerDemo : MonoBehaviour
     private float currentSpeed = 0f;
     private float velocityXZMagnitude = 0f;
     private float accelerationRatio = 0f;
+
+    // 碰撞检测变量
+    private bool isCollidingHorizontal = false;
+    private float collisionTimer = 0f;
+    private Vector3 lastCollisionNormal = Vector3.zero;
+    private float lastCollisionTime = 0f;
 
     void Start()
     {
@@ -93,12 +112,15 @@ public class PlayerDemo : MonoBehaviour
         {
             Jump();
         }
-        
+
         // 应用自定义重力
         if (useCustomGravity)
         {
             ApplyCustomGravity();
         }
+
+        // 更新碰撞计时器
+        UpdateCollisionState();
     }
     
     void FixedUpdate()
@@ -106,7 +128,86 @@ public class PlayerDemo : MonoBehaviour
         // 在FixedUpdate中处理物理移动
         Move();
     }
-    
+
+    // 更新碰撞状态
+    void UpdateCollisionState()
+    {
+        // 如果当前有碰撞状态并且计时器尚未结束
+        if (isCollidingHorizontal)
+        {
+            collisionTimer -= Time.deltaTime;
+            if (collisionTimer <= 0f)
+            {
+                isCollidingHorizontal = false;
+                collisionTimer = 0f;
+            }
+        }
+
+        // 如果碰撞后太长时间没有新的碰撞，重置状态
+        if (Time.time - lastCollisionTime > collisionResetTime * 2)
+        {
+            isCollidingHorizontal = false;
+        }
+    }
+
+    // 碰撞检测回调
+    void OnCollisionEnter(Collision collision)
+    {
+        HandleCollision(collision);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        HandleCollision(collision);
+    }
+
+    // 处理碰撞逻辑
+    void HandleCollision(Collision collision)
+    {
+        // 忽略与地面的碰撞
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            return;
+        }
+
+        // 获取所有接触点
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            // 检查碰撞法线是否主要在水平方向
+            float horizontalComponent = Mathf.Abs(contact.normal.x) + Mathf.Abs(contact.normal.z);
+            float verticalComponent = Mathf.Abs(contact.normal.y);
+
+            // 如果碰撞主要是水平方向的（墙壁等）
+            if (horizontalComponent > verticalComponent && !isGrounded)
+            {
+                isCollidingHorizontal = true;
+                collisionTimer = collisionResetTime;
+                lastCollisionNormal = contact.normal;
+                lastCollisionTime = Time.time;
+
+                // 当检测到水平碰撞时，强制水平方向的速度为0
+                Vector3 currentVelocity = rb.velocity;
+                Vector3 alignedVelocity = Vector3.Project(currentVelocity, contact.normal);
+                
+                // 只取消与碰撞方向相反的水平速度分量，保留垂直分量
+                Vector3 newVelocity = currentVelocity - alignedVelocity;
+                // 保留原始的Y轴速度
+                newVelocity.y = currentVelocity.y;
+
+                // 应用新的速度
+                rb.velocity = newVelocity;
+
+                if (showCollisionDebug)
+                {
+                    Debug.Log("碰撞检测：水平碰撞，重置水平速度");
+                    Debug.DrawRay(contact.point, contact.normal * 2, Color.red, 2f);
+                }
+
+                break; // 找到一个有效碰撞点后退出循环
+            }
+        }
+    }
+
     // 计算基于摄像机朝向的移动方向
     Vector3 CalculateMoveDirection()
     {
@@ -142,6 +243,13 @@ public class PlayerDemo : MonoBehaviour
     // 移动逻辑
     void Move()
     {
+        // 如果有水平碰撞，不应用水平移动力
+        if (isCollidingHorizontal && !isGrounded)
+        {
+            // 只应用垂直方向的力，不应用水平力
+            return;
+        }
+
         // 只有在有输入时才应用对数加速
         if (moveDirection.magnitude > 0.1f)
         {
@@ -251,6 +359,13 @@ public class PlayerDemo : MonoBehaviour
                 Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 Gizmos.DrawRay(transform.position, horizontalVelocity.normalized * 2);
             }
+            
+            // 绘制最后的碰撞法线
+            if (Application.isPlaying && isCollidingHorizontal)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawRay(transform.position, lastCollisionNormal * 2);
+            }
         }
     }
     
@@ -268,5 +383,20 @@ public class PlayerDemo : MonoBehaviour
         GUI.Label(new Rect(10, 50, 300, 20), "加速比例: " + accelerationRatio.ToString("F2"), style);
         GUI.Label(new Rect(10, 70, 300, 20), "加速系数: " + accelerationCurve.Evaluate(accelerationRatio).ToString("F2"), style);
         GUI.Label(new Rect(10, 90, 300, 20), "二段跳可用: " + canDoubleJump, style);
+        GUI.Label(new Rect(10, 110, 300, 20), "当前输入: " + new Vector2(horizontalInput, verticalInput).ToString(), style);
+        GUI.Label(new Rect(10, 130, 300, 20), "是否死亡: " + isDie, style);
+        
+        // 添加碰撞状态的调试信息
+        if (isCollidingHorizontal)
+            style.normal.textColor = Color.yellow;
+        else
+            style.normal.textColor = debugColor;
+        
+        GUI.Label(new Rect(10, 150, 300, 20), "水平碰撞: " + isCollidingHorizontal, style);
+        if (isCollidingHorizontal)
+        {
+            GUI.Label(new Rect(10, 170, 300, 20), "碰撞计时器: " + collisionTimer.ToString("F2"), style);
+            GUI.Label(new Rect(10, 190, 300, 20), "碰撞法线: " + lastCollisionNormal.ToString("F2"), style);
+        }
     }
 }
