@@ -20,15 +20,15 @@ public class UIDemoController : MonoBehaviour
     private void Awake()
     {
         uiFrame = defaultUISettings.CreateUIInstance();
-        //Signals.Get<StartDemoSignal>().AddListener(OnStartDemo);
-        //Signals.Get<NavigateToWindowSignal>().AddListener(OnNavigateToWindow);
+        Signals.Get<StartDemoSignal>().AddListener(OnStartDemo);
+        Signals.Get<NavigateToWindowSignal>().AddListener(OnNavigateToWindow);
         //Signals.Get<ShowConfirmationPopupSignal>().AddListener(OnShowConfirmationPopup);
     }
 
     private void OnDestroy()
     {
-        //Signals.Get<StartDemoSignal>().RemoveListener(OnStartDemo);
-        //Signals.Get<NavigateToWindowSignal>().RemoveListener(OnNavigateToWindow);
+        Signals.Get<StartDemoSignal>().RemoveListener(OnStartDemo);
+        Signals.Get<NavigateToWindowSignal>().RemoveListener(OnNavigateToWindow);
         //Signals.Get<ShowConfirmationPopupSignal>().RemoveListener(OnShowConfirmationPopup);
     }
     /// <summary>
@@ -44,7 +44,7 @@ public class UIDemoController : MonoBehaviour
     private void OnStartDemo()
     {
         uiFrame.ShowPanel(ScreenIds.NavigationPanel);// 显示导航面板（常驻）
-        uiFrame.ShowPanel(ScreenIds.ToastPanel);// 显示提示面板（临时消息）
+        //uiFrame.ShowPanel(ScreenIds.ToastPanel);// 显示提示面板（临时消息）
     }
     /// <summary>
     /// 带参数的窗口跳转

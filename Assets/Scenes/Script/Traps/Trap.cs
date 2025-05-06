@@ -7,20 +7,12 @@ public class Trap : MonoBehaviour
     [Tooltip("是否使用触发器检测")]
     public bool useTrigger = true;
     
-    [Tooltip("陷阱颜色")]
-    public Color trapColor = Color.red;
     
     [Tooltip("是否在碰撞后销毁陷阱")]
     public bool destroyAfterTrigger = false;
     
     private void Start()
     {
-        // 设置陷阱颜色
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            renderer.material.color = trapColor;
-        }
         
         // 确保有碰撞器
         Collider collider = GetComponent<Collider>();

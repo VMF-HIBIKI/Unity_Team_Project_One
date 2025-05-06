@@ -25,10 +25,10 @@ public class PlayerDemo : MonoBehaviour
     [Header("重力设置")]
     public float gravityScale = 2f;       // 重力缩放
     public bool useCustomGravity = true;  // 是否使用自定义重力
-    
+
     [Header("旋转设置")]
     public float rotationSpeed = 120f;    // 旋转速度
-    
+
     [Header("地面检测")]
     public Transform groundCheck;
     public LayerMask groundLayer;
@@ -78,7 +78,7 @@ public class PlayerDemo : MonoBehaviour
             rb.constraints = RigidbodyConstraints.FreezeRotation; // 冻结旋转
             rb.mass = 1f;
         }
-        
+
         // 如果没有设置地面检测点，则自动在脚部创建一个
         if (groundCheck == null)
         {
@@ -93,20 +93,20 @@ public class PlayerDemo : MonoBehaviour
     {
         // 地面检测
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-        
+
         // 重置二段跳状态
         if (isGrounded)
         {
             canDoubleJump = true;
         }
-        
+
         // 获取WSAD或箭头键输入
         horizontalInput = Input.GetAxisRaw("Horizontal"); // AD或左右箭头
-        verticalInput = Input.GetAxisRaw("Vertical");     // WS或上下箭头
-        
+        verticalInput = Input.GetAxisRaw("Vertical"); // WS或上下箭头
+
         // 根据相机方向计算移动方向
         moveDirection = CalculateMoveDirection();
-        
+
         // 跳跃控制（空格键）
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -122,7 +122,7 @@ public class PlayerDemo : MonoBehaviour
         // 更新碰撞计时器
         UpdateCollisionState();
     }
-    
+
     void FixedUpdate()
     {
         // 在FixedUpdate中处理物理移动
@@ -165,10 +165,10 @@ public class PlayerDemo : MonoBehaviour
     void HandleCollision(Collision collision)
     {
         // 忽略与地面的碰撞
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        /*if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             return;
-        }
+        }*/
 
         // 获取所有接触点
         foreach (ContactPoint contact in collision.contacts)
@@ -188,7 +188,7 @@ public class PlayerDemo : MonoBehaviour
                 // 当检测到水平碰撞时，强制水平方向的速度为0
                 Vector3 currentVelocity = rb.velocity;
                 Vector3 alignedVelocity = Vector3.Project(currentVelocity, contact.normal);
-                
+
                 // 只取消与碰撞方向相反的水平速度分量，保留垂直分量
                 Vector3 newVelocity = currentVelocity - alignedVelocity;
                 // 保留原始的Y轴速度
@@ -214,13 +214,13 @@ public class PlayerDemo : MonoBehaviour
         // 获取摄像机的前方和右方向量
         Vector3 cameraForward = Camera.main.transform.forward;
         Vector3 cameraRight = Camera.main.transform.right;
-        
+
         // 确保方向向量在水平面上
         cameraForward.y = 0;
         cameraRight.y = 0;
         cameraForward.Normalize();
         cameraRight.Normalize();
-        
+
         // 根据输入和摄像机方向计算移动方向
         return cameraForward * verticalInput + cameraRight * horizontalInput;
     }
@@ -256,27 +256,27 @@ public class PlayerDemo : MonoBehaviour
             // 计算当前水平移动速度
             Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
             velocityXZMagnitude = horizontalVelocity.magnitude;
-            
+
             // 计算加速比例（当前速度与最大速度的比值）
             accelerationRatio = Mathf.Clamp01(velocityXZMagnitude / maxMoveSpeed);
-            
+
             // 根据加速度曲线评估当前应用的加速度比例
             float accelerationFactor = accelerationCurve.Evaluate(accelerationRatio);
-            
+
             // 计算目标速度，应用对数加速
             Vector3 targetVelocity = moveDirection.normalized * maxMoveSpeed;
-            
+
             // 只影响水平移动，保留Y轴速度
             Vector3 desiredVelocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z);
-            
+
             // 应用基于当前加速度比例的加速力
-            Vector3 accelerationForce = (targetVelocity - horizontalVelocity) * 
-                                       moveAcceleration * 
+            Vector3 accelerationForce = (targetVelocity - horizontalVelocity) *
+                                       moveAcceleration *
                                        (1 - accelerationFactor);
-            
+
             // 应用加速力
             rb.AddForce(new Vector3(accelerationForce.x, 0, accelerationForce.z), ForceMode.Acceleration);
-            
+
             // 应用阻尼
             if (velocityXZMagnitude > 0.1f)
             {
@@ -284,21 +284,21 @@ public class PlayerDemo : MonoBehaviour
                 Vector3 dampingForce = -horizontalVelocity * moveDamping;
                 rb.AddForce(dampingForce, ForceMode.Acceleration);
             }
-            
+
             // 限制最大速度
             if (horizontalVelocity.magnitude > maxMoveSpeed)
             {
                 Vector3 limitedVelocity = horizontalVelocity.normalized * maxMoveSpeed;
                 rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
             }
-            
+
             // 更新当前速度（用于调试）
             currentSpeed = new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude;
-            
+
             // 朝向移动方向
             if (moveDirection != Vector3.zero)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
+                Quaternion targetRotation = Quaternion.LookRotation(moveDirection.normalized);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
         }
@@ -316,12 +316,12 @@ public class PlayerDemo : MonoBehaviour
                 // 当几乎静止时，直接设置水平速度为零（防止滑动）
                 rb.velocity = new Vector3(0, rb.velocity.y, 0);
             }
-            
+
             // 更新当前速度（用于调试）
             currentSpeed = new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude;
         }
     }
-    
+
     void Jump()
     {
         if (isGrounded)
@@ -338,28 +338,28 @@ public class PlayerDemo : MonoBehaviour
             canDoubleJump = false;
         }
     }
-    
+
     // 在Editor中可视化检测范围和调试信息
     void OnDrawGizmosSelected()
     {
         if (!showDebugGizmos) return;
-        
+
         if (groundCheck != null)
         {
             Gizmos.color = debugColor;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-            
+
             // 绘制移动方向
             if (Application.isPlaying && moveDirection.magnitude > 0.1f)
             {
                 Gizmos.color = Color.blue;
                 Gizmos.DrawRay(transform.position, moveDirection.normalized * 2);
-                
+
                 Gizmos.color = Color.red;
                 Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 Gizmos.DrawRay(transform.position, horizontalVelocity.normalized * 2);
             }
-            
+
             // 绘制最后的碰撞法线
             if (Application.isPlaying && isCollidingHorizontal)
             {
@@ -368,16 +368,16 @@ public class PlayerDemo : MonoBehaviour
             }
         }
     }
-    
+
     // 在屏幕上显示调试信息
     void OnGUI()
     {
         if (!showDebugText || !Application.isPlaying) return;
-        
+
         GUIStyle style = new GUIStyle();
         style.fontSize = 16;
         style.normal.textColor = debugColor;
-        
+
         GUI.Label(new Rect(10, 10, 300, 20), "地面状态: " + (isGrounded ? "接触地面" : "空中"), style);
         GUI.Label(new Rect(10, 30, 300, 20), "当前速度: " + currentSpeed.ToString("F2"), style);
         GUI.Label(new Rect(10, 50, 300, 20), "加速比例: " + accelerationRatio.ToString("F2"), style);
@@ -385,13 +385,13 @@ public class PlayerDemo : MonoBehaviour
         GUI.Label(new Rect(10, 90, 300, 20), "二段跳可用: " + canDoubleJump, style);
         GUI.Label(new Rect(10, 110, 300, 20), "当前输入: " + new Vector2(horizontalInput, verticalInput).ToString(), style);
         GUI.Label(new Rect(10, 130, 300, 20), "是否死亡: " + isDie, style);
-        
+
         // 添加碰撞状态的调试信息
         if (isCollidingHorizontal)
             style.normal.textColor = Color.yellow;
         else
             style.normal.textColor = debugColor;
-        
+
         GUI.Label(new Rect(10, 150, 300, 20), "水平碰撞: " + isCollidingHorizontal, style);
         if (isCollidingHorizontal)
         {
