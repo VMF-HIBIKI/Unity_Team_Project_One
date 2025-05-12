@@ -51,7 +51,9 @@ public class PlayerDemo : MonoBehaviour
         set { isDie = value; }
     }
 
+    private Animator animator; // 动画控制器
     private Rigidbody rb;
+    private string currentAnimationState; // 当前动画状态
     private bool isGrounded;
     private bool canDoubleJump;
     private float horizontalInput;
@@ -72,6 +74,7 @@ public class PlayerDemo : MonoBehaviour
     {
         // 获取或添加必要组件
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
@@ -87,6 +90,7 @@ public class PlayerDemo : MonoBehaviour
             check.transform.localPosition = new Vector3(0, -1f, 0); // 根据长方体尺寸调整位置
             groundCheck = check.transform;
         }
+        ChangeAnimation("Idle"); // 初始化动画状态
     }
 
     void Update()
@@ -101,14 +105,23 @@ public class PlayerDemo : MonoBehaviour
         }
 
         // 获取WSAD或箭头键输入
-        horizontalInput = Input.GetAxisRaw("Horizontal"); // AD或左右箭头
-        verticalInput = Input.GetAxisRaw("Vertical"); // WS或上下箭头
+        if (!isDie)
+        {
+            horizontalInput = Input.GetAxisRaw("Horizontal"); // AD或左右箭头
+        }
+        if(rb.velocity.y < -30f)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, -30f, rb.velocity.z);
+        }
+
+
+        
 
         // 根据相机方向计算移动方向
         moveDirection = CalculateMoveDirection();
 
         // 跳跃控制（空格键）
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !isDie)
         {
             Jump();
         }
@@ -119,6 +132,8 @@ public class PlayerDemo : MonoBehaviour
             ApplyCustomGravity();
         }
 
+
+
         // 更新碰撞计时器
         UpdateCollisionState();
     }
@@ -127,6 +142,48 @@ public class PlayerDemo : MonoBehaviour
     {
         // 在FixedUpdate中处理物理移动
         Move();
+        CheckAnimation(); // 检查动画状态
+        if (isDie)
+        {
+            rb.velocity = new Vector3(0, 0, 0);
+        }
+    }
+
+    private void CheckAnimation()
+    {
+        if (isDie)
+        {
+            ChangeAnimation("Dead"); // 如果玩家死亡，则不更新动画
+            return;
+        }
+        // 检查动画状态并切换动画
+        if (isGrounded)
+        {
+            if (rb.velocity.x > 0.1f|| rb.velocity.x < -0.1f)
+            {
+                ChangeAnimation("Run");
+            }
+            else
+            {
+                ChangeAnimation("Idle");
+            }
+        }
+        else
+        {
+            if (rb.velocity.y > 0 || rb.velocity.y < 0 )
+            {
+                ChangeAnimation("Jump");
+            }
+        }
+    }
+
+    private void ChangeAnimation(string animation,float crossfade = 0.2f)
+    {
+        if (currentAnimationState != animation)
+        {
+            animator.CrossFade(animation,crossfade);
+            currentAnimationState = animation;
+        }
     }
 
     // 更新碰撞状态
@@ -228,16 +285,16 @@ public class PlayerDemo : MonoBehaviour
     // 自定义重力
     void ApplyCustomGravity()
     {
-        if (rb.velocity.y < 0)
+        if (rb.velocity.y > -30f)
         {
             // 下落时应用更大的重力
             rb.AddForce(Vector3.up * Physics.gravity.y * gravityScale * (fallMultiplier - 1) * Time.deltaTime, ForceMode.Acceleration);
         }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
-        {
+        //else if (rb.velocity.y > 0 && rb.velocity.y > -30f && !Input.GetButton("Jump"))
+        //{
             // 松开跳跃键时应用更大的重力实现短跳
-            rb.AddForce(Vector3.up * Physics.gravity.y * gravityScale * (lowJumpMultiplier - 1) * Time.deltaTime, ForceMode.Acceleration);
-        }
+            //rb.AddForce(Vector3.up * Physics.gravity.y * gravityScale * (lowJumpMultiplier - 1) * Time.deltaTime, ForceMode.Acceleration);
+        //}
     }
 
     // 移动逻辑
@@ -299,7 +356,8 @@ public class PlayerDemo : MonoBehaviour
             if (moveDirection != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(moveDirection.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                Quaternion fix = Quaternion.Euler(0, 90, 0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation * fix, rotationSpeed * Time.deltaTime);
             }
         }
         else
