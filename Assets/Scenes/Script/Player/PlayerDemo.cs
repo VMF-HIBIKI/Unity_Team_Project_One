@@ -109,9 +109,9 @@ public class PlayerDemo : MonoBehaviour
         {
             horizontalInput = Input.GetAxisRaw("Horizontal"); // AD或左右箭头
         }
-        if(rb.velocity.y < -30f)
+        if(rb.velocity.y < -28f)
         {
-            rb.velocity = new Vector3(rb.velocity.x, -30f, rb.velocity.z);
+            rb.velocity = new Vector3(rb.velocity.x, -28f, rb.velocity.z);
         }
 
 
