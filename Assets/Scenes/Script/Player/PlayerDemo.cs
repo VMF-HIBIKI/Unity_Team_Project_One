@@ -63,6 +63,7 @@ public class PlayerDemo : MonoBehaviour
     private float currentSpeed = 0f;
     private float velocityXZMagnitude = 0f;
     private float accelerationRatio = 0f;
+    private float inAirTime= 0f;
 
     // 碰撞检测变量
     private bool isCollidingHorizontal = false;
@@ -97,11 +98,15 @@ public class PlayerDemo : MonoBehaviour
     {
         // 地面检测
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-
+        if(inAirTime > 5f)
+        {
+            isDie = true; // 如果空中时间超过5秒，玩家死亡
+        }
         // 重置二段跳状态
         if (isGrounded)
         {
             canDoubleJump = true;
+            inAirTime = 0f;
         }
 
         // 获取WSAD或箭头键输入
@@ -381,7 +386,8 @@ public class PlayerDemo : MonoBehaviour
     }
 
     void Jump()
-    {
+    {   
+        inAirTime += Time.deltaTime;
         if (isGrounded)
         {
             // 第一段跳跃

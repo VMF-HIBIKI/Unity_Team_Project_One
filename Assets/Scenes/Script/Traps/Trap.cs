@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,14 +7,14 @@ public class Trap : MonoBehaviour
 {
     [Tooltip("是否使用触发器检测")]
     public bool useTrigger = true;
-    
+    public Action onPlayerDie;
     
     [Tooltip("是否在碰撞后销毁陷阱")]
     public bool destroyAfterTrigger = false;
     
     private void Start()
     {
-        
+        onPlayerDie += DeadCount.instance.AddDeadCount;
         // 确保有碰撞器
         Collider collider = GetComponent<Collider>();
         if (collider == null)
@@ -57,6 +58,8 @@ public class Trap : MonoBehaviour
             {
                 // 设置isDie属性为true
                 playerDemo.isDie = true;
+                onPlayerDie?.Invoke();
+                
                 // 也可以使用属性访问器
                 // playerDemo.IsDie = true;
                 
@@ -70,7 +73,7 @@ public class Trap : MonoBehaviour
             // 如果设置了碰撞后销毁，则销毁陷阱
             if (destroyAfterTrigger)
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
         }
     }
