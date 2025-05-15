@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UIFramework;
@@ -22,13 +23,16 @@ public class UIDemoController : MonoBehaviour
         uiFrame = defaultUISettings.CreateUIInstance();
         Signals.Get<StartDemoSignal>().AddListener(OnStartDemo);
         Signals.Get<NavigateToWindowSignal>().AddListener(OnNavigateToWindow);
+
         //Signals.Get<ShowConfirmationPopupSignal>().AddListener(OnShowConfirmationPopup);
     }
+
 
     private void OnDestroy()
     {
         Signals.Get<StartDemoSignal>().RemoveListener(OnStartDemo);
         Signals.Get<NavigateToWindowSignal>().RemoveListener(OnNavigateToWindow);
+
         //Signals.Get<ShowConfirmationPopupSignal>().RemoveListener(OnShowConfirmationPopup);
     }
     /// <summary>
@@ -46,6 +50,7 @@ public class UIDemoController : MonoBehaviour
         uiFrame.ShowPanel(ScreenIds.NavigationPanel);// 显示导航面板（常驻）
         //uiFrame.ShowPanel(ScreenIds.ToastPanel);// 显示提示面板（临时消息）
     }
+
     /// <summary>
     /// 带参数的窗口跳转
     /// </summary>
@@ -54,19 +59,21 @@ public class UIDemoController : MonoBehaviour
     {
         uiFrame.CloseCurrentWindow();
 
-        /*switch (windowId)
+        switch (windowId)
         {
-            case ScreenIds.PlayerWindow:
-                uiFrame.OpenWindow(windowId, new PlayerWindowProperties(fakePlayerData.LevelProgress));
+            case ScreenIds.BackGroundWindow:
+                uiFrame.OpenWindow(windowId);
                 break;
-            case ScreenIds.CameraProjectionWindow:
-                transformToFollow.parent.gameObject.SetActive(true);
-                uiFrame.OpenWindow(windowId, new CameraProjectionWindowProperties(cam, transformToFollow));
+            /*case ScreenIds.CountinueWindow:
+                uiFrame.OpenWindow(windowId);
                 break;
+            case ScreenIds.ThanksWindow:
+                uiFrame.OpenWindow(windowId);
+                break;*/
             default:
                 uiFrame.OpenWindow(windowId);
                 break;
-        }*/
+        }
     }
     /// <summary>
     /// 确认弹窗处理

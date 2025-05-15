@@ -16,4 +16,6 @@ MonoBehaviour:
   screensToRegister:
   - {fileID: 7617306793594988998, guid: 0a680a728e2bff444bd5b6b236aac4ee, type: 3}
   - {fileID: 3955197997429667027, guid: 45f336f4b18fc084db012ee283bb1be4, type: 3}
+  - {fileID: 7569089596161388695, guid: 9874f51d73cc35c4b81b42076155fa3e, type: 3}
+  - {fileID: 7826052241601829550, guid: ee68399488417d84a8a78d916de92b4e, type: 3}
   deactivateScreenGOs: 1

@@ -11,11 +11,11 @@ public class SaveSystem : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("´æµµÂ·¾¶£º" + Application.persistentDataPath);
+        
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            Debug.Log("´æµµÂ·¾¶£º" + Application.persistentDataPath);
         }
         else
         {
