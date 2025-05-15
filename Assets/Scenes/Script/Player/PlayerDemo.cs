@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerDemo : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class PlayerDemo : MonoBehaviour
         new Keyframe(1, 1)
     );                                    // 加速度曲线，默认为对数曲线
     public float horizontalMagnitude = 0.5f;   // 水平施加的力大小
+    public Vector3 startposition;
+    public Camera camera; // 摄像机引用
 
     [Header("跳跃设置")]
     public float jumpForce = 7f;          // 跳跃力
@@ -147,11 +150,24 @@ public class PlayerDemo : MonoBehaviour
     {
         // 在FixedUpdate中处理物理移动
         Move();
-        CheckAnimation(); // 检查动画状态
         if (isDie)
         {
             rb.velocity = new Vector3(0, 0, 0);
         }
+        CheckAnimation(); // 检查动画状态
+        if (isDie)
+        {
+            StartCoroutine(waitingToReswpan()); // 等待复活
+        }
+
+    }
+
+    IEnumerator  waitingToReswpan()
+    {
+        Debug.Log("等待复活");
+        yield return new WaitForSeconds(3f);
+        SaveSystem.Instance.SaveGame(DeadCount.instance.deadCount,LevelManager.instance.GetCurrentScene,LevelManager.instance.GetLevelStatus);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void CheckAnimation()
@@ -274,8 +290,8 @@ public class PlayerDemo : MonoBehaviour
     Vector3 CalculateMoveDirection()
     {
         // 获取摄像机的前方和右方向量
-        Vector3 cameraForward = Camera.main.transform.forward;
-        Vector3 cameraRight = Camera.main.transform.right;
+        Vector3 cameraForward = camera.transform.forward;
+        Vector3 cameraRight = camera.transform.right;
 
         // 确保方向向量在水平面上
         cameraForward.y = 0;

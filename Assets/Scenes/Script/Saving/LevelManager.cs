@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager instance; // 单例实例
     private string currentScene; // 当前场景名称
     private bool[] levels; // 关卡状态数组
     private DeadCount dc; // 死亡次数
 
     void Start()
     {
+        if(instance == null)
+        {
+            instance = this;
+        }
         // 初始化DeadCount引用
         if (DeadCount.instance != null)
         {
@@ -19,6 +24,8 @@ public class LevelManager : MonoBehaviour
         {
             Debug.LogError("DeadCount单例未初始化！");
         }
+        currentScene = SaveSystem.Instance.LoadGame().currentScene;
+        SaveSystem.Instance.JumpToNextLevel(currentScene);
     }
     public string GetCurrentScene
     {

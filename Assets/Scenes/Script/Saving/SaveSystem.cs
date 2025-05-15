@@ -11,11 +11,11 @@ public class SaveSystem : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("存档路径：" + Application.persistentDataPath);
+        
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            Debug.Log("存档路径：" + Application.persistentDataPath);
         }
         else
         {
@@ -79,7 +79,8 @@ public class SaveSystem : MonoBehaviour
         }
         else
         {
-            Debug.LogError("存档文件不存在");
+            SaveGame(0, "level1", new bool[3] { false, false, false });
+            Debug.LogError("存档文件不存在,已创建");
             return null;
         }
     }

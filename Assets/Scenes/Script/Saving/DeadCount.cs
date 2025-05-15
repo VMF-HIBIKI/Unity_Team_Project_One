@@ -12,12 +12,16 @@ public class DeadCount : MonoBehaviour
         if(instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        deadCount = SaveSystem.Instance.LoadGame().DeadCount;
     }
 
     public void AddDeadCount()

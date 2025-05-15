@@ -27,15 +27,15 @@ RectTransform:
   m_GameObject: {fileID: 2060388738292839111}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2494813, y: 1.3997886, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 88630437134135246}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 21}
-  m_SizeDelta: {x: -40, y: -58}
+  m_AnchoredPosition: {x: -0.27429962, y: 13.503998}
+  m_SizeDelta: {x: -50.9882, y: -58.708}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4419130853045013439
 CanvasRenderer:
@@ -65,8 +65,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ebb990c835cdd224babc7de4980d7cd9, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: d0f9ae76166fbb94a9e28e1bb587f4a8, type: 3}
+  m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -104,8 +104,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3588384642012459075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -45}
+  m_LocalScale: {x: 0.9332816, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8338613314173166000}
@@ -114,8 +114,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -75}
-  m_SizeDelta: {x: 220, y: 138}
+  m_AnchoredPosition: {x: 420.76, y: -75.03}
+  m_SizeDelta: {x: 220, y: 150.06}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &7797202251746677583
 CanvasRenderer:
@@ -277,7 +277,7 @@ RectTransform:
   m_GameObject: {fileID: 3955197997429667027}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6530071, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 88630437134135246}
@@ -285,8 +285,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -800, y: 150}
+  m_AnchoredPosition: {x: -0.001953125, y: 0}
+  m_SizeDelta: {x: -758.48, y: 150.06}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &1483171869872550296
 CanvasRenderer:
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.99215686, g: 1, b: 0.9882353, a: 1}
+  m_Color: {r: 0.26335287, g: 0, b: 0.96981126, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -339,12 +339,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 20
-    m_Right: 20
-    m_Top: 6
-    m_Bottom: 6
+    m_Left: 0
+    m_Right: 100
+    m_Top: 0
+    m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 30
+  m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -461,15 +461,18 @@ MonoBehaviour:
   properties:
     priority: 0
   navigationTargets:
-  - sprite: {fileID: 21300000, guid: 5831fb5f5b5a2cb47aa3aa2f17124752, type: 3}
-    buttonText: "\u4E3B\u9875"
-    targetScreen: HomeWindow
-  - sprite: {fileID: 0}
-    buttonText: "\u9009\u53D6\u5B58\u6863"
-    targetScreen: SaveCardWIndow
-  - sprite: {fileID: 0}
-    buttonText: "\u81F4\u8C22\u540D\u5355"
+  - sprite: {fileID: 21300000, guid: 66977c69843f1ea449613f3844f037c2, type: 3}
+    buttonText: 
+    targetScreen: BackGroundWindow
+  - sprite: {fileID: 21300000, guid: 993caa86216f3b5478a5be1818b930e8, type: 3}
+    buttonText: 
+    targetScreen: CountinueWindow
+  - sprite: {fileID: 21300000, guid: 3bc6f0c8e6f1a2e4bae6daece034c43f, type: 3}
+    buttonText: 
     targetScreen: ThanksWIndow
+  - sprite: {fileID: 21300000, guid: f1d364c1d95b7a4458acfee7f21b278d, type: 3}
+    buttonText: 
+    targetScreen: QuitWindow
   templateButton: {fileID: 1779058133790727090}
 --- !u!1 &9119580892891632796
 GameObject:
