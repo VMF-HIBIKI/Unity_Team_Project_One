@@ -31,12 +31,13 @@ public class CountinueWindowController : WindowController
     private GameData gameData = null;
     private static SaveSystem Instance;
     public CountinueWindowEntry CountinueWindowEntry = new CountinueWindowEntry();
-    int count = 1;
+    int count = 0;
 
     protected override void OnPropertiesSet()
     {
         SetSaveCard();
     }
+    
 
     private void SetSaveCard()
     {
@@ -53,8 +54,13 @@ public class CountinueWindowController : WindowController
             }
         }
         CountinueWindowEntry.ButtonText1.text = "死亡次数：" + gameData.DeadCount.ToString();
-        CountinueWindowEntry.ButtonText2.text = "当前关卡：" + count.ToString();
+        CountinueWindowEntry.ButtonText2.text = "当前通关：" + count.ToString();
     }
 
 
+    public void OnResetButtonClicked()
+    {
+        Instance.ResetSaving();
+        SetSaveCard();
+    }
 }

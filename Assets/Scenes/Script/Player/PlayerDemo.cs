@@ -111,7 +111,7 @@ public class PlayerDemo : MonoBehaviour
             canDoubleJump = true;
             inAirTime = 0f;
         }
-
+        inAirTime += Time.deltaTime;
         // 获取WSAD或箭头键输入
         if (!isDie)
         {
@@ -132,6 +132,7 @@ public class PlayerDemo : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && !isDie)
         {
             Jump();
+            
         }
 
         // 应用自定义重力
@@ -139,7 +140,12 @@ public class PlayerDemo : MonoBehaviour
         {
             ApplyCustomGravity();
         }
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("ESC键被按下");
+            // 执行退出游戏、暂停菜单等逻辑
+            HandleEscapeKey();
+        }
 
 
         // 更新碰撞计时器
@@ -161,11 +167,16 @@ public class PlayerDemo : MonoBehaviour
         }
 
     }
+    private void HandleEscapeKey()
+    {
+        SceneManager.LoadScene(0);
+    }
 
     IEnumerator  waitingToReswpan()
     {
         Debug.Log("等待复活");
         yield return new WaitForSeconds(3f);
+        DeadCount.instance.AddDeadCount();
         SaveSystem.Instance.SaveGame(DeadCount.instance.deadCount,LevelManager.instance.GetCurrentScene,LevelManager.instance.GetLevelStatus);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -242,11 +253,10 @@ public class PlayerDemo : MonoBehaviour
     // 处理碰撞逻辑
     void HandleCollision(Collision collision)
     {
-        // 忽略与地面的碰撞
-        /*if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+         if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             return;
-        }*/
+        }
 
         // 获取所有接触点
         foreach (ContactPoint contact in collision.contacts)
@@ -403,7 +413,7 @@ public class PlayerDemo : MonoBehaviour
 
     void Jump()
     {   
-        inAirTime += Time.deltaTime;
+        
         if (isGrounded)
         {
             // 第一段跳跃

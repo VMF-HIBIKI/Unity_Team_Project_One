@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SavePoint : MonoBehaviour
@@ -79,8 +80,14 @@ public class SavePoint : MonoBehaviour
 
             // œ‘ æ¥Êµµ≥…π¶UI
             ShowSaveSuccessUI();
+            if (levelManager.GetCurrentScene != "level3")
+            {
+                SaveSystem.Instance.JumpToNextLevel(currentScene);
+            }else
+            {
+                SceneManager.LoadScene(0);
+            }
 
-            SaveSystem.Instance.JumpToNextLevel(currentScene);
         }
     }
 

@@ -43,15 +43,18 @@ public class SaveSystem : MonoBehaviour
             case "level2":
                 ActivateLevel("level3");
                 break;
-            case "level3":
-                Console.WriteLine("关卡到顶了");  // 输出：星期三
+            case "reset":
+                ActivateLevel("level1"); ;  // 输出：星期三
                 break;
             default:
                 Console.WriteLine("没有关卡");
                 break;
         }
     }
-
+    public void ResetSaving()
+    {
+        SaveGame(0, "reset", new bool[3] { false, false, false });
+    }
     public void ActivateLevel(string levelName)
     {
         for (int i = 0; i < transform.childCount; i++)
@@ -79,7 +82,7 @@ public class SaveSystem : MonoBehaviour
         }
         else
         {
-            SaveGame(0, "level1", new bool[3] { false, false, false });
+            SaveGame(0, "reset", new bool[3] { false, false, false });
             Debug.LogError("存档文件不存在,已创建");
             return null;
         }
